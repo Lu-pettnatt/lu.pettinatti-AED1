@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+typedef struct {
+    int id;          
+    long long time;  /
+} Cashier;
+
+
+int compare(const void *a, const void *b) {
+    Cashier *ca = (Cashier *)a;
+    Cashier *cb = (Cashier *)b;
+    if (ca->time == cb->time) {
+        return ca->id - cb->id; 
+    }
+    return (ca->time > cb->time) - (ca->time < cb->time);
+}
+
+
+void heapify(Cashier *heap, int size, int i) {
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < size && compare(&heap[left], &heap[smallest]) < 0) {
+        smallest = left;
+    }
+    if (right < size && compare(&heap[right], &heap[smallest]) < 0) {
+        smallest = right;
+    }
+    if (smallest != i) {
+        Cashier temp = heap[i];
+        heap[i] = heap[smallest];
+        heap[smallest] = temp;
+        heapify(heap, size, smallest);
+    }
+}
+
+
+void push(Cashier *heap, int *size, Cashier cashier) {
+    int i = (*size)++;
+    heap[i] = cashier;
+
+    while (i > 0 && compare(&heap[i], &heap[(i - 1) / 2]) < 0) {
+        Cashier temp = heap[i];
+        heap[i] = heap[(i - 1) / 2];
+        heap[(i - 1) / 2] = temp;
+        i = (i - 1) / 2;
+    }
+}
+
+
+Cashier pop(Cashier *heap, int *size) {
+    Cashier root = heap[0];
+    heap[0] = heap[--(*size)];
+    heapify(heap, *size, 0);
+    return root;
+}
+
+int main() {
+    int n, m;
+
+    while (scanf("%d %d", &n, &m) != EOF) {
+        int vi[n], cj[m];
+        
+        for (int i = 0; i < n; i++) {
+            scanf("%d", &vi[i]);
+        }
+        for (int i = 0; i < m; i++) {
+            scanf("%d", &cj[i]);
+        }
+
+        
+        Cashier heap[n];
+        int size = 0;
+
+        
+        for (int i = 0; i < n; i++) {
+            Cashier cashier = {i + 1, 0};
+            push(heap, &size, cashier);
+        }
+
+        
+        for (int i = 0; i < m; i++) {
+            Cashier current = pop(heap, &size); 
+            current.time += vi[current.id - 1] * cj[i]; 
+            push(heap, &size, current); 
+        }
+
+        
+        long long maxTime = 0;
+        for (int i = 0; i < size; i++) {
+            if (heap[i].time > maxTime) {
+                maxTime = heap[i].time;
+            }
+        }
+
+        printf("%lld\n", maxTime);
+    }
+
+    return 0;
+}
