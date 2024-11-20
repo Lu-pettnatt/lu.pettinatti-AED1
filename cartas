@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_CARDS 50
+
+
+typedef struct {
+    int data[MAX_CARDS];
+    int front, rear, size;
+} Queue;
+
+void initQueue(Queue *q) {
+    q->front = 0;
+    q->rear = -1;
+    q->size = 0;
+}
+
+int isEmpty(Queue *q) {
+    return q->size == 0;
+}
+
+void enqueue(Queue *q, int value) {
+    if (q->size < MAX_CARDS) {
+        q->rear = (q->rear + 1) % MAX_CARDS;
+q->data[q->rear] = value;
+        q->size++;
+    }
+}
+
+int dequeue(Queue *q) {
+    if (!isEmpty(q)) {
+        int value = q->data[q->front];
+        q->front = (q->front + 1) % MAX_CARDS;
+        q->size--;
+        return value;
+    }
+    return -1; 
+}
+
+
+void processCards(int n) {
+    Queue q;
+    initQueue(&q);
+
+    for (int i = 1; i <= n; i++) {
+        enqueue(&q, i);
+    }
+
+    int discarded[MAX_CARDS];
+    int discardedCount = 0;
+
+    while (q.size > 1) {
+        discarded[discardedCount++] = dequeue(&q);
+
+        enqueue(&q, dequeue(&q));
+    }
+ int remaining = dequeue(&q);
+
+    printf("Discarded cards:");
+    if (discardedCount > 0) {
+        for (int i = 0; i < discardedCount; i++) {
+            printf("%s%d", (i == 0) ? " " : ", ", discarded[i]);
+        }
+    }
+    printf("\n");
+
+    printf("Remaining card: %d\n", remaining);
+}
+
+int main() {
+    int n;
+
+    while (1) {
+        scanf("%d", &n);
+        if (n == 0) break;
+
+        processCards(n);
+    }
+
+    return 0;
+}
