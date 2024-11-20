@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_EXPR 300
+#define MAX_STACK 300
+
+
+typedef struct {
+    int top;
+    char data[MAX_STACK];
+} Stack;
+
+Stack* createStack() {
+    Stack *stack = (Stack *)malloc(sizeof(Stack));
+    stack->top = -1;
+    return stack;
+}
+int isEmpty(Stack *stack) {
+    return stack->top == -1;
+}
+void push(Stack *stack, char value) {
+    if (stack->top < MAX_STACK - 1) {
+        stack->data[++stack->top] = value;
+    }
+}
+
+char pop(Stack *stack) {
+    if (!isEmpty(stack)) {
+        return stack->data[stack->top--];
+         }
+    return '\0';
+}
+
+char peek(Stack *stack) {
+    if (!isEmpty(stack)) {
+        return stack->data[stack->top];
+    }
+    return '\0';
+}
+
+void freeStack(Stack *stack) {
+    free(stack);
+}
+
+int precedence(char op) {
+    switch (op) {
+        case '^': return 3;
+        case '*':
+        case '/': return 2;
+        case '+':
+        case '-': return 1;
+        default: return 0;
+    }
+}
+
+int isOperator(char ch) {
+    return ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '^';
+}
+
+void infixToPostfix(const char *infix, char *postfix) {
+    Stack *stack = createStack();
+    int j = 0;
+ for (int i = 0; infix[i] != '\0'; i++) {
+        char ch = infix[i];
+
+        if (isalnum(ch)) {
+            postfix[j++] = ch;
+        } else if (ch == '(') {
+            push(stack, ch);
+        } else if (ch == ')') {
+            while (!isEmpty(stack) && peek(stack) != '(') {
+                postfix[j++] = pop(stack);
+            }
+            pop(stack); 
+        } else if (isOperator(ch)) {
+            while (!isEmpty(stack) && precedence(peek(stack)) >= precedence(ch)) {
+                postfix[j++] = pop(stack);
+            }
+            push(stack, ch);
+        }
+    }
+
+    while (!isEmpty(stack)) {
+        postfix[j++] = pop(stack);
+    }
+
+    postfix[j] = '\0';
+    freeStack(stack);
+}
+
+int main() {
+    int N;
+    char infix[MAX_EXPR], postfix[MAX_EXPR];
+
+    scanf("%d", &N);
+     getchar(); 
+
+    for (int i = 0; i < N; i++) {
+        fgets(infix, MAX_EXPR, stdin);
+        infix[strcspn(infix, "\n")] = '\0'; 
+
+        infixToPostfix(infix, postfix);
+
+        printf("%s\n", postfix);
+    }
+
+    return 0;
+}
