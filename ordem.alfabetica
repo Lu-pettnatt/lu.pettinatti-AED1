@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_N 100
+#define MAX_NAME_LEN 21  
+
+
+void sortNames(char names[][MAX_NAME_LEN], int n) {
+    char temp[MAX_NAME_LEN];
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (strcmp(names[i], names[j]) > 0) {
+                strcpy(temp, names[i]);
+                strcpy(names[i], names[j]);
+                strcpy(names[j], temp);
+            }
+        }
+    }
+}
+
+int main() {
+    int N, K;
+    char names[MAX_N][MAX_NAME_LEN];
+
+    
+    if (scanf("%d %d", &N, &K) != 2) {
+        fprintf(stderr, "Erro ao ler N e K\n");
+        return 1;
+    }
+if (N < 1 || N > MAX_N || K < 1 || K > N) {
+        fprintf(stderr, "Valores inválidos de N ou K\n");
+        return 1;
+    }
+
+    
+    for (int i = 0; i < N; i++) {
+        if (scanf("%s", names[i]) != 1) {
+            fprintf(stderr, "Erro ao ler o nome do aluno\n");
+            return 1;
+        }
+    }
+
+    
+    sortNames(names, N);
+
+    
+    printf("%s\n", names[K - 1]);
+
+    return 0;
+}
