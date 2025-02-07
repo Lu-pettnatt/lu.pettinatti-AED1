@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int digito;
+    double oleosidade;
+} Tecla;
+
+
+int comparar(const void *a, const void *b) {
+    Tecla *t1 = (Tecla *)a;
+    Tecla *t2 = (Tecla *)b;
+    
+    if (t2->oleosidade > t1->oleosidade) return 1;
+    if (t2->oleosidade < t1->oleosidade) return -1;
+    return t1->digito - t2->digito;
+}
+
+int main() {
+    int N, caso = 1;
+    while (scanf("%d", &N) != EOF) {
+        Tecla teclas[10];
+        
+        
+        for (int i = 0; i < 10; i++) {
+            scanf("%lf", &teclas[i].oleosidade);
+            teclas[i].digito = i;
+        }
+        
+        
+        qsort(teclas, 10, sizeof(Tecla), comparar);
+        
+        
+        printf("Caso %d: ", caso++);
+        for (int i = 0; i < N; i++) {
+            printf("%d", teclas[i].digito);
+        }
+        printf("\n");
+    }
+    return 0;
+}
