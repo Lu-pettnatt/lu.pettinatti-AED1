@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define SIZE 8
+
+
+int dx[] = {1, 1, 2, 2, -1, -1, -2, -2};
+int dy[] = {2, -2, 1, -1, 2, -2, 1, -1};
+
+
+typedef struct {
+    int x, y, moves;
+} Position;
+
+
+void parsePosition(char *pos, int *x, int *y) {
+    *x = pos[0] - 'a';
+    *y = pos[1] - '1';
+}
+
+
+int bfs(int sx, int sy, int ex, int ey) {
+    if (sx == ex && sy == ey) return 0;
+    
+    int visited[SIZE][SIZE] = {0};
+    Position queue[SIZE * SIZE];
+    int front = 0, rear = 0;
+    
+    queue[rear++] = (Position){sx, sy, 0};
+    visited[sx][sy] = 1;
+    
+    while (front < rear) {
+        Position curr = queue[front++];
+        
+        for (int i = 0; i < 8; i++) {
+            int nx = curr.x + dx[i];
+            int ny = curr.y + dy[i];
+            
+            if (nx >= 0 && nx < SIZE && ny >= 0 && ny < SIZE && !visited[nx][ny]) {
+                if (nx == ex && ny == ey) return curr.moves + 1;
+                visited[nx][ny] = 1;
+                queue[rear++] = (Position){nx, ny, curr.moves + 1};
+            }
+        }
+    }
+    return -1;
+}
+
+int main() {
+    char start[3], end[3];
+    while (scanf("%s %s", start, end) == 2) {
+        int sx, sy, ex, ey;
+        parsePosition(start, &sx, &sy);
+        parsePosition(end, &ex, &ey);
+        int moves = bfs(sx, sy, ex, ey);
+        printf("To get from %s to %s takes %d knight moves.\n", start, end, moves);
+    }
+    return 0;
+}
