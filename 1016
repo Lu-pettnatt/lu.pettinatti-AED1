@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+int main ()
+{
+
+unsigned short int distancia;
+
+scanf("%hd", &distancia);
+
+printf("%d minutos\n", distancia*2);
+
+}
