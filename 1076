@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_V 49  
+
+typedef struct {
+    int u, v;
+} Edge;
+
+int V, A, start;
+int adj[MAX_V][MAX_V];
+int degree[MAX_V];
+
+int dfs(int v, int parent) {
+    int count = 0;
+    for (int i = 0; i < V; i++) {
+        if (adj[v][i] && i != parent) {
+            adj[v][i] = adj[i][v] = 0;  
+            count += 2 + dfs(i, v);  
+        }
+    }
+    return count;
+}
+
+int main() {
+    int T;
+    scanf("%d", &T);
+    while (T--) {
+        scanf("%d", &start);
+        scanf("%d %d", &V, &A);
+        
+        memset(adj, 0, sizeof(adj));
+        memset(degree, 0, sizeof(degree));
+        
+        for (int i = 0; i < A; i++) {
+            int u, v;
+            scanf("%d %d", &u, &v);
+            if (!adj[u][v]) {
+                adj[u][v] = adj[v][u] = 1;
+                degree[u]++;
+                degree[v]++;
+            }
+        }
+        
+        printf("%d\n", dfs(start, -1));
+    }
+    return 0;
+}
