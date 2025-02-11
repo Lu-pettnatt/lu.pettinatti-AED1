@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+int compareAsc(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+
+int compareDesc(const void *a, const void *b) {
+    return (*(int*)b - *(int*)a);
+}
+
+int main() {
+    int N;
+    scanf("%d", &N);
+    
+    int pares[N], impares[N];
+    int countP = 0, countI = 0;
+    
+    for (int i = 0; i < N; i++) {
+        int num;
+        scanf("%d", &num);
+        if (num % 2 == 0) {
+            pares[countP++] = num;
+        } else {
+            impares[countI++] = num;
+        }
+    }
+    
+    
+    qsort(pares, countP, sizeof(int), compareAsc);
+    
+    
+    qsort(impares, countI, sizeof(int), compareDesc);
+    
+    
+    for (int i = 0; i < countP; i++) {
+        printf("%d\n", pares[i]);
+    }
+    
+    
+    for (int i = 0; i < countI; i++) {
+        printf("%d\n", impares[i]);
+    }
+    
+    return 0;
+}
