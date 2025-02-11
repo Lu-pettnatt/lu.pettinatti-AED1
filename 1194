@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_N 52
+
+
+typedef struct Node {
+    char data;
+    struct Node *left, *right;
+} Node;
+
+
+Node* newNode(char data) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    node->data = data;
+    node->left = node->right = NULL;
+    return node;
+}
+
+
+int findIndex(char* str, char c, int start, int end) {
+    for (int i = start; i <= end; i++) {
+        if (str[i] == c) return i;
+    }
+    return -1;
+}
+
+
+Node* buildTree(char* pre, char* in, int inStart, int inEnd, int* preIndex) {
+    if (inStart > inEnd) return NULL;
+    
+    char rootChar = pre[(*preIndex)++];
+    Node* root = newNode(rootChar);
+    
+    if (inStart == inEnd) return root;
+    
+    int inIndex = findIndex(in, rootChar, inStart, inEnd);
+    
+    root->left = buildTree(pre, in, inStart, inIndex - 1, preIndex);
+    root->right = buildTree(pre, in, inIndex + 1, inEnd, preIndex);
+    
+    return root;
+}
+
+
+void printPostorder(Node* root) {
+    if (root == NULL) return;
+    printPostorder(root->left);
+    printPostorder(root->right);
+    printf("%c", root->data);
+}
+
+int main() {
+    int C;
+    scanf("%d", &C);
+    
+    while (C--) {
+        int N;
+        char pre[MAX_N + 1], in[MAX_N + 1];
+        
+        scanf("%d %s %s", &N, pre, in);
+        
+        int preIndex = 0;
+        Node* root = buildTree(pre, in, 0, N - 1, &preIndex);
+        
+        printPostorder(root);
+        printf("\n");
+    }
+    
+    return 0;
+}
